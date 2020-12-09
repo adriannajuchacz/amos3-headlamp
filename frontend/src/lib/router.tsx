@@ -1,6 +1,7 @@
-import _ from 'lodash';
-import React from 'react';
+import _, { compact } from 'lodash';
+import React, { Component } from 'react';
 import { generatePath } from 'react-router';
+import AdvisorList from '../components/advisor/List';
 import AuthToken from '../components/account/Auth';
 import AuthChooser from '../components/authchooser';
 import Chooser from '../components/cluster/Chooser';
@@ -212,6 +213,13 @@ export const ROUTES: {
     exact: true,
     sidebar: 'ingresses',
     component: () => <IngressDetails />
+  },
+  advisor: {
+    path: '/advisor',
+    exact: true,
+    name: 'Network Policy Advisor',
+    sidebar: 'advisor',
+    component: () => <AdvisorList />
   },
   ReplicaSets: {
     path: '/replicasets',

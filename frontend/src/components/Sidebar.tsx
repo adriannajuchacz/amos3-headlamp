@@ -178,6 +178,10 @@ const LIST_ITEMS: SidebarEntry[] = [
         name: 'ingresses',
         label: 'Ingresses'
       },
+      {
+        name: 'advisor',
+        label: 'Network Policy Advisor'
+      },
     ]
   },
   {
