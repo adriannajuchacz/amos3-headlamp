@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"io"
 	"log"
@@ -149,19 +148,17 @@ func generateReport(inputfile string, outputfile string) {
 	cmdReport.Run()
 }
 
-func main() {
-	// go startAdvisorMonitor("demo", "networktrace.log")
+// For Testing pls uncomment the func main()
+// it is for bulding commented
 
-	go advisorRealTimeWrapper("monitor --namespaces demo --output ./networktrace.log")
+// func main() {
+// 	// go startAdvisorMonitor("demo", "networktrace.log")
 
-	input := bufio.NewScanner(os.Stdin)
-	input.Scan()
+// 	go advisorRealTimeWrapper("monitor --namespaces demo --output ./networktrace.log")
 
-	generateReport("networktrace.log", "network-policy.yaml")
+// 	input := bufio.NewScanner(os.Stdin)
+// 	input.Scan()
 
-	//running = false
-	// for {
+// 	generateReport("networktrace.log", "network-policy.yaml")
 
-	// }
-
-}
+// }
