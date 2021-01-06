@@ -1,31 +1,23 @@
 import React from 'react';
 import Advisor from '../../lib/k8s/advisor';
-import fileDocumentBoxOutline from '@iconify/icons-mdi/file-document-box-outline';
 import { useFilterFunc } from '../../lib/util';
-import Link from '../common/Link';
 import { SectionBox } from '../common/SectionBox';
 import SectionFilterHeader from '../common/SectionFilterHeader';
-import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import SimpleTable from '../common/SimpleTable';
 import Namespace from '../../lib/k8s/namespace';
 import { StatusLabel } from '../common/Label';
-import { createDebuggerStatement } from 'typescript';
 import { Tooltip } from '@material-ui/core';
-import Icon from '@iconify/react';
 import { LogViewer, LogViewerProps } from '../common/LogViewer';
 import { makeStyles } from '@material-ui/core/styles';
 
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
 import _ from 'lodash';
 
 const useStyle = makeStyles({
     containerFormControl: {
-      minWidth: '11rem',
+        minWidth: '11rem',
     }
-  });
+});
 
 interface AdvisorLogViewerProps extends Omit<LogViewerProps, 'logs'> {
     //item: Namespace;
@@ -36,18 +28,18 @@ function AdvisorLogViewer(props: AdvisorLogViewerProps) {
     const { onClose, open, ...other } = props;
     const [lines, setLines] = React.useState<number>(100);
     const [logs, setLogs] = React.useState<string[]>([]);
-  
+
     function handleLinesChange(event: any) {
-      setLines(event.target.value);
+        setLines(event.target.value);
     }
-  
+
     return (
-      <LogViewer
-        title={`Logs:`}
-        open={open}
-        onClose={onClose}
-        logs={logs}
-      />
+        <LogViewer
+            title={`Acquiring network policies for namespaces:`}
+            open={open}
+            onClose={onClose}
+            logs={logs}
+        />
     );
 }
 
@@ -68,12 +60,11 @@ export default function AdvisorList() {
 
     return (
         <SectionBox
-
             title={
                 <SectionFilterHeader
                     title="Network Policy Advisor"
-                    //noNamespaceFilter
-                    //headerStyle="main"
+                //noNamespaceFilter
+                //headerStyle="main"
                 />
             }
         >
@@ -96,15 +87,18 @@ export default function AdvisorList() {
                     },
                     {
                         label: 'Recording',
-                        getter: (advisor) => 
-                        <Tooltip title="Record this Namespace">
-                            <IconButton
-                                aria-label="delete"
-                                onClick={() => setShowLogs(true)}
-                            >
-                                <Icon icon={fileDocumentBoxOutline} />
-                            </IconButton>
-                        </Tooltip>,
+                        getter: (advisor) =>
+                            <div>
+                                <Tooltip title="By clicking this button you will start recording this particular namespace">
+                                    <Button
+                                        onClick={() => setShowLogs(true)}
+                                        variant="outlined"
+                                        style={{ textTransform: 'none' }}>
+                                        Start Recording
+                                    </Button>
+                                </Tooltip>
+                            </div>
+                        ,
                     },
                 ]}
                 data={advisors}
@@ -113,7 +107,7 @@ export default function AdvisorList() {
             <AdvisorLogViewer
                 key="logs"
                 open={showLogs}
-                onClose={ () => setShowLogs(false) }
+                onClose={() => setShowLogs(false)}
             />
         </SectionBox>
     )

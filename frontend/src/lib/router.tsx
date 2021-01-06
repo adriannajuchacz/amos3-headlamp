@@ -2,7 +2,7 @@ import _, { compact } from 'lodash';
 import React, { Component } from 'react';
 import { generatePath } from 'react-router';
 import AdvisorList from '../components/advisor/List';
-import AdvisorDetails from '../components/advisor/Details';
+//import AdvisorDetails from '../components/advisor/Details';
 import AuthToken from '../components/account/Auth';
 import AuthChooser from '../components/authchooser';
 import Chooser from '../components/cluster/Chooser';
