@@ -20,12 +20,12 @@ const useStyle = makeStyles({
 });
 
 interface AdvisorLogViewerProps extends Omit<LogViewerProps, 'logs'> {
-    //item: Namespace;
+    namespaceTitle: String;
 }
 
 function AdvisorLogViewer(props: AdvisorLogViewerProps) {
     const classes = useStyle();
-    const { onClose, open, ...other } = props;
+    const { onClose, open, namespaceTitle, ...other } = props;
     const [lines, setLines] = React.useState<number>(100);
     const [logs, setLogs] = React.useState<string[]>([]);
 
@@ -35,7 +35,7 @@ function AdvisorLogViewer(props: AdvisorLogViewerProps) {
 
     return (
         <LogViewer
-            title={`Acquiring network policies for namespaces:`}
+            title={`Acquiring network policies for namespaces: ${namespaceTitle}`}
             open={open}
             onClose={onClose}
             logs={logs}
@@ -43,10 +43,12 @@ function AdvisorLogViewer(props: AdvisorLogViewerProps) {
     );
 }
 
+
 export default function AdvisorList() {
     const [advisors, error] = Namespace.useList();
     const filterFunc = useFilterFunc();
     const [showLogs, setShowLogs] = React.useState(false);
+    let [selctedNamespace, setSelctedNamespace] = React.useState("");
     item: Namespace;
 
     function makeStatusLabel(namespace: Advisor) {
@@ -56,6 +58,15 @@ export default function AdvisorList() {
                 {status}
             </StatusLabel>
         );
+    }
+    function startRecording(namespace: string) {
+        setShowLogs(true)
+        setSelctedNamespace(namespace)
+    }
+
+    function closeAdvisorLogViewer() {
+        setShowLogs(false)
+        setSelctedNamespace("")
     }
 
     return (
@@ -91,7 +102,7 @@ export default function AdvisorList() {
                             <div>
                                 <Tooltip title="By clicking this button you will start recording this particular namespace">
                                     <Button
-                                        onClick={() => setShowLogs(true)}
+                                        onClick={() => startRecording(advisor.getName())}
                                         variant="outlined"
                                         style={{ textTransform: 'none' }}>
                                         Start Recording
@@ -107,7 +118,8 @@ export default function AdvisorList() {
             <AdvisorLogViewer
                 key="logs"
                 open={showLogs}
-                onClose={() => setShowLogs(false)}
+                onClose={() => closeAdvisorLogViewer()}
+                namespaceTitle={selctedNamespace}
             />
         </SectionBox>
     )
