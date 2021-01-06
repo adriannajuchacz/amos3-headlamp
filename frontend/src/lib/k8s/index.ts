@@ -7,6 +7,7 @@ import { useTypedSelector } from '../../redux/reducers/reducers';
 import { getCluster } from '../util';
 import { request } from './apiProxy';
 import { Cluster, KubeObject, StringDict } from './cluster';
+import Advisor from './advisor'
 import ClusterRole from './clusterRole';
 import ClusterRoleBinding from './clusterRoleBinding';
 import ConfigMap from './configMap';
@@ -31,6 +32,7 @@ import StatefulSet from './statefulSet';
 import StorageClass from './storageClass';
 
 const classList = [
+  Advisor,
   ClusterRole,
   ClusterRoleBinding,
   ConfigMap,
