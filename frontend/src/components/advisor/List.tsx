@@ -4,12 +4,14 @@ import { useFilterFunc } from '../../lib/util';
 import { SectionBox } from '../common/SectionBox';
 import SectionFilterHeader from '../common/SectionFilterHeader';
 import Button from '@material-ui/core/Button';
+import Box from '@material-ui/core/Box';
 import SimpleTable from '../common/SimpleTable';
 import Namespace from '../../lib/k8s/namespace';
 import { StatusLabel } from '../common/Label';
 import { Tooltip } from '@material-ui/core';
 import { LogViewer, LogViewerProps } from '../common/LogViewer';
 import { makeStyles } from '@material-ui/core/styles';
+import Timer from 'react-compound-timer'
 
 import _ from 'lodash';
 
@@ -29,9 +31,6 @@ function AdvisorLogViewer(props: AdvisorLogViewerProps) {
     const [lines, setLines] = React.useState<number>(100);
     const [logs, setLogs] = React.useState<string[]>([]);
 
-    function handleLinesChange(event: any) {
-        setLines(event.target.value);
-    }
 
     return (
         <LogViewer
@@ -39,7 +38,31 @@ function AdvisorLogViewer(props: AdvisorLogViewerProps) {
             open={open}
             onClose={onClose}
             logs={logs}
-        />
+        >
+            <Timer>
+                {({ stop }: { stop: any }) => (
+                    <React.Fragment>
+                        <Tooltip title={`By clicking this button you will stop recording this particular namespace`}>
+                            <Button
+                                onClick={stop}
+                                variant="outlined"
+                                style={{ textTransform: 'none' }}>
+                                Stop Recording
+                                </Button>
+                        </Tooltip>
+                        <Box component="span" m={1}>
+                            <div>
+                                <p>runs:
+                                    <Timer.Hours formatValue={value => `${value}:`} />
+                                    <Timer.Minutes formatValue={value => `${value}:`} />
+                                    <Timer.Seconds formatValue={value => `${value} s`} />
+                                </p>
+                            </div>
+                        </Box>
+                    </React.Fragment>
+                )}
+            </Timer>
+        </LogViewer >
     );
 }
 

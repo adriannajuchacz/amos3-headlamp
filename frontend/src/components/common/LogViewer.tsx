@@ -55,7 +55,7 @@ export function LogViewer(props: LogViewerProps) {
 
   function downloadLog() {
     const element = document.createElement('a');
-    const file = new Blob(logs, {type: 'text/plain'});
+    const file = new Blob(logs, { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
     element.download = `${downloadName}.txt`;
     // Required for FireFox
@@ -69,7 +69,7 @@ export function LogViewer(props: LogViewerProps) {
       logsBottomRef.current.scrollIntoView();
     }
   },
-  [logs]);
+    [logs]);
 
   return (
     <Dialog
@@ -94,11 +94,14 @@ export function LogViewer(props: LogViewerProps) {
             container
             spacing={1}
           >
-            {topActions.map((component, i) =>
-              <Grid item key={i}>
-                {component}
-              </Grid>
-            )}
+            {!props.children ? (
+              topActions.map((component, i) =>
+                <Grid item key={i}>
+                  {component}
+                </Grid>
+              )) :
+              (props.children)
+            }
           </Grid>
           <Grid item xs>
             <Tooltip title="Download">
