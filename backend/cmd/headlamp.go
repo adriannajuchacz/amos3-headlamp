@@ -19,6 +19,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"golang.org/x/oauth2"
+	np "github.com/headlamp/backend/cmd/np"
 )
 
 type HeadlampConfig struct {
@@ -254,6 +255,34 @@ func StartHeadlampServer(config *HeadlampConfig) {
 			return
 		}
 	})
+
+	// Network Policy Advisor
+	r.HandleFunc("/npreport/{namespace}", func(w http.ResponseWriter, r *http.Request) {
+		namespace := mux.Vars(r)["namespace"]
+		np.Report(namespace)
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode("Report Request successful"); err != nil {
+			log.Println("Error encoding plugins list", err)
+		}
+	}).Methods("GET")
+
+	r.HandleFunc("/npstart/{namespace}", func(w http.ResponseWriter, r *http.Request) {
+		namespace := mux.Vars(r)["namespace"]
+		np.Start(namespace)
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode("Start Request successful"); err != nil {
+			log.Println("Error encoding plugins list", err)
+		}
+	}).Methods("GET")
+
+	r.HandleFunc("/npstop/{namespace}", func(w http.ResponseWriter, r *http.Request) {
+		namespace := mux.Vars(r)["namespace"]
+		np.Stop(namespace)
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode("Stop Request successful"); err != nil {
+			log.Println("Error encoding plugins list", err)
+		}
+	}).Methods("GET")
 
 	// Serve the frontend if needed
 	spa := spaHandler{staticPath: config.staticDir, indexPath: "index.html"}
