@@ -1,4 +1,4 @@
-package main
+package networkPolicy
 
 import (
 	"fmt"
@@ -8,11 +8,24 @@ import (
 	"os/exec"
 	"strings"
 	"sync"
+//	"bufio"
 )
 
 // var (
 // 	running bool = false
 // )
+func Report (namespace string) {
+	log.Println("####### Sending a Network Policy Report for:", namespace)
+}
+
+func Start (namespace string) {
+	log.Println("####### Starting the Network Policy for:", namespace)
+}
+
+func Stop (namespace string) {
+	log.Println("####### Stoping the Network Policy for:", namespace)
+}
+
 
 func copyAndCapture(w io.Writer, r io.Reader) ([]byte, error) {
 	var out []byte
@@ -150,15 +163,15 @@ func generateReport(inputfile string, outputfile string) {
 
 // For Testing pls uncomment the func main()
 // it is for bulding commented
+/* 
+func main() {
+ 	// go startAdvisorMonitor("demo", "networktrace.log")
 
-// func main() {
-// 	// go startAdvisorMonitor("demo", "networktrace.log")
+ 	go advisorRealTimeWrapper("monitor --namespaces demo --output ./networktrace.log")
 
-// 	go advisorRealTimeWrapper("monitor --namespaces demo --output ./networktrace.log")
+ 	input := bufio.NewScanner(os.Stdin)
+ 	input.Scan()
 
-// 	input := bufio.NewScanner(os.Stdin)
-// 	input.Scan()
-
-// 	generateReport("networktrace.log", "network-policy.yaml")
-
-// }
+ 	generateReport("networktrace.log", "network-policy.yaml")
+ }
+ */
