@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FormEvent } from 'react';
 import Advisor from '../../lib/k8s/advisor';
 import { useFilterFunc } from '../../lib/util';
 import { SectionBox } from '../common/SectionBox';
@@ -8,12 +8,23 @@ import Box from '@material-ui/core/Box';
 import SimpleTable from '../common/SimpleTable';
 import Namespace from '../../lib/k8s/namespace';
 import { StatusLabel } from '../common/Label';
-import { Tooltip } from '@material-ui/core';
+import { Checkbox, TextField, Tooltip } from '@material-ui/core';
 import { LogViewer, LogViewerProps } from '../common/LogViewer';
 import { makeStyles } from '@material-ui/core/styles';
 import Timer from 'react-compound-timer'
+import Select from 'react-select';
 
-import _ from 'lodash';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import { useDispatch } from 'react-redux';
+import { useTypedSelector } from '../../redux/reducers/reducers';
+import checkboxBlankOutline from '@iconify/icons-mdi/checkbox-blank-outline';
+import checkBoxOutline from '@iconify/icons-mdi/check-box-outline';
+import { useTheme } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+
+import _, { filter } from 'lodash';
+import { setNamespaceFilter } from '../../redux/actions/actions';
+import Icon from '@iconify/react';
 
 const useStyle = makeStyles({
     containerFormControl: {
@@ -72,7 +83,26 @@ export default function AdvisorList() {
     const filterFunc = useFilterFunc();
     const [showLogs, setShowLogs] = React.useState(false);
     let [selctedNamespace, setSelctedNamespace] = React.useState("");
-    item: Namespace;
+
+    const theme = useTheme();
+    const filter = useTypedSelector(state => state.filter)
+    const [namespaces, setNamespaces] = React.useState<Namespace[]>([]);
+    const [selected, setSelected] = React.useState([]);
+
+    Namespace.useApiList(setNamespaces);
+
+    const dispatch = useDispatch();
+
+    function renderTags(tags: string[]) {
+        let jointTags = tags.join(', ');
+        if (jointTags.length > 15) {
+          jointTags = jointTags.slice(0, 15) + '…';
+        }
+    
+        return (
+          <Typography>{jointTags}</Typography>
+        );
+    }
 
     function makeStatusLabel(namespace: Advisor) {
         const status = namespace.status.phase;
@@ -82,34 +112,97 @@ export default function AdvisorList() {
             </StatusLabel>
         );
     }
-    function startRecording(namespace: string) {
+    function startRecording(){
         setShowLogs(true)
-        setSelctedNamespace(namespace)
+        setSelctedNamespace("default")
     }
 
     function closeAdvisorLogViewer() {
-        setShowLogs(false)
+        //setShowLogs(false)
         setSelctedNamespace("")
     }
 
     return (
         <SectionBox
             title={
-                <SectionFilterHeader
-                    title="Network Policy Advisor"
-                //noNamespaceFilter
-                //headerStyle="main"
-                />
+                "Network Policy Advisor"
+                //<SectionFilterHeader
+                    // title="Network Policy Advisor"
+                ///>
             }
         >
-            <SimpleTable
+            <p>Choose the namespaces and start recording to get network policy advices.</p>
+            <Autocomplete
+                multiple
+                id="namespaces-filter"
+                autoComplete
+                options={namespaces.map(namespace => namespace.metadata.name)}
+                
+                defaultValue={[]}
+                onChange={(event, newValue) => {
+                    dispatch(setNamespaceFilter(newValue));
+                    return [newValue];
+                }}
+
+                value={[...filter.namespaces.values()].reverse()}
+                renderOption={(option, { selected }) => (
+                    <React.Fragment>
+                        <Checkbox
+                            icon={<Icon icon={checkboxBlankOutline} />}
+                            checkedIcon={<Icon icon={checkBoxOutline} />}
+                            style={{
+                                color: selected ? theme.palette.primary.main : theme.palette.text.primary }}
+                            checked={selected}
+                        />
+                        {option}
+                    </React.Fragment>
+                )}
+                renderTags={renderTags}
+                renderInput={params => (
+                    <Box width="15rem">
+                        <TextField
+                            {...params}
+                            variant="standard"
+                            label="Namespaces"
+                            fullWidth
+                            InputLabelProps={{shrink: true}}
+                            style={{marginTop: 0}}
+                            placeholder={[...filter.namespaces.values()].length > 0 ? '' : 'Filter'}
+                        />
+                    </Box>
+                )}
+            />
+            <div>
+                <Tooltip title="By clicking this button you will start recording this particular namespace">
+                    <Button
+                        //onClick={() => startRecording()}
+                        variant="outlined"
+                        style={{ textTransform: 'none' }}>
+                        Start Recording
+                    </Button>
+                </Tooltip>
+            </div>
+            {/* <form onSubmit={startRecording}> */}
+            {/* <SimpleTable
                 rowsPerPage={[100]}
                 filterFunction={filterFunc}
                 errorMessage={Advisor.getErrorMessage(error)}
                 columns={[
                     {
                         label: 'Name',
-                        getter: (advisor) => advisor.getName(),
+                        getter: (advisor) => 
+                        // <Checkbox>
+                        //     value="Deine Muddah"
+                        // </Checkbox>,
+                        <div>
+                            <input
+                                value={advisor.getName()} 
+                                type="checkbox" 
+                                //checked={state.isGoing} 
+                                //onChange={handleClick}
+                            />
+                            {advisor.getName()}
+                        </div>,
                         sort: (n1: Advisor, n2: Advisor) => {
                             if (n1.metadata.name < n2.metadata.name) {
                                 return -1;
@@ -119,25 +212,27 @@ export default function AdvisorList() {
                             return 0;
                         }
                     },
-                    {
-                        label: 'Recording',
-                        getter: (advisor) =>
-                            <div>
-                                <Tooltip title="By clicking this button you will start recording this particular namespace">
-                                    <Button
-                                        onClick={() => startRecording(advisor.getName())}
-                                        variant="outlined"
-                                        style={{ textTransform: 'none' }}>
-                                        Start Recording
-                                    </Button>
-                                </Tooltip>
-                            </div>
-                        ,
-                    },
+                    // {
+                    //     label: 'Recording',
+                    //     getter: (advisor) =>
+                    //         <div>
+                    //             <Tooltip title="By clicking this button you will start recording this particular namespace">
+                    //                 <Button
+                    //                     onClick={() => startRecording(advisor.getName())}
+                    //                     variant="outlined"
+                    //                     style={{ textTransform: 'none' }}>
+                    //                     Start Recording
+                    //                 </Button>
+                    //             </Tooltip>
+                    //         </div>
+                    //     ,
+                    // },
                 ]}
                 data={advisors}
                 defaultSortingColumn={3}
-            />
+            /> */}
+            {/* <input type="submit" value="Absenden" />
+            </form> */}
             <AdvisorLogViewer
                 key="logs"
                 open={showLogs}
