@@ -117,7 +117,6 @@ export default function AdvisorList() {
             }
         >
             <p>Choose the namespaces and start recording to get network policy advices.</p>
-            <div>{`inputValue: '${selctedNamespace}'`}</div>
             <Autocomplete
                 multiple
                 id="namespaces-filter"
