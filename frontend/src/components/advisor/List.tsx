@@ -33,6 +33,14 @@ interface AdvisorLogViewerProps extends Omit<LogViewerProps, 'logs'> {
     namespaceTitle: String;
 }
 
+function stopRecording(namespace: any) {
+    fetch(`http://localhost:4466/npstop/${namespace}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+        });
+}
+
 function AdvisorLogViewer(props: AdvisorLogViewerProps) {
     const classes = useStyle();
     const { onClose, open, namespaceTitle, ...other } = props;
@@ -47,7 +55,9 @@ function AdvisorLogViewer(props: AdvisorLogViewerProps) {
             onClose={onClose}
             logs={logs}
         >
-            <Timer>
+            <Timer
+                onStop={() => stopRecording(namespaceTitle)}
+            >
                 {({ stop }: { stop: any }) => (
                     <React.Fragment>
                         <Tooltip title={`By clicking this button you will stop recording this particular namespace`}>
@@ -89,19 +99,24 @@ export default function AdvisorList() {
     function renderTags(tags: string[]) {
         let jointTags = tags.join(', ');
         if (jointTags.length > 15) {
-          jointTags = jointTags.slice(0, 15) + '…';
+            jointTags = jointTags.slice(0, 15) + '…';
         }
-    
+
         return (
-          <Typography>{jointTags}</Typography>
+            <Typography>{jointTags}</Typography>
         );
     }
 
-    function setNamespace(namespace: string){
+    function setNamespace(namespace: string) {
         setSelctedNamespace(namespace)
     }
 
-    function startRecording(){
+    function startRecording(selctedNamespace: any) {
+        fetch(`http://localhost:4466/npstart/${selctedNamespace}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+            });
         setShowLogs(true)
     }
 
@@ -115,58 +130,62 @@ export default function AdvisorList() {
             title={
                 "Network Policy Advisor"
             }
+            style={{ padding: "20px" }}
         >
             <p>Choose the namespaces and start recording to get network policy advices.</p>
-            <Autocomplete
-                multiple
-                id="namespaces-filter"
-                autoComplete
-                options={namespaces.map(namespace => namespace.metadata.name)}
-                
-                defaultValue={[]}
-                onChange={(event, newValue) => {
-                    dispatch(setNamespaceFilter(newValue));
-                    setNamespace(newValue);
-                    return [newValue];
-                }}
+            <div style={{ display: "flex", marginBottom: "20px" }}>
+                <Autocomplete
+                    multiple
+                    id="namespaces-filter"
+                    autoComplete
+                    options={namespaces.map(namespace => namespace.metadata.name)}
 
-                value={[...filter.namespaces.values()].reverse()}
-                renderOption={(option, { selected }) => (
-                    <React.Fragment>
-                        <Checkbox
-                            icon={<Icon icon={checkboxBlankOutline} />}
-                            checkedIcon={<Icon icon={checkBoxOutline} />}
-                            style={{
-                                color: selected ? theme.palette.primary.main : theme.palette.text.primary }}
-                            checked={selected}
-                        />
-                        {option}
-                    </React.Fragment>
-                )}
-                renderTags={renderTags}
-                renderInput={params => (
-                    <Box width="15rem">
-                        <TextField
-                            {...params}
-                            variant="standard"
-                            label="Namespaces"
-                            fullWidth
-                            InputLabelProps={{shrink: true}}
-                            style={{marginTop: 0}}
-                            placeholder={[...filter.namespaces.values()].length > 0 ? '' : 'Filter'}
-                        />
-                    </Box>
-                )}
-            />
-            <div>
-                <Tooltip title="By clicking this button you will start recording this particular namespace">
-                    <Button
-                        onClick={() => startRecording()}
-                        variant="outlined"
-                        style={{ textTransform: 'none' }}>
-                        Start Recording
+                    defaultValue={[]}
+                    onChange={(event, newValue) => {
+                        dispatch(setNamespaceFilter(newValue));
+                        setNamespace(newValue);
+                        return [newValue];
+                    }}
+
+                    value={[...filter.namespaces.values()].reverse()}
+                    renderOption={(option, { selected }) => (
+                        <React.Fragment>
+                            <Checkbox
+                                icon={<Icon icon={checkboxBlankOutline} />}
+                                checkedIcon={<Icon icon={checkBoxOutline} />}
+                                style={{
+                                    color: selected ? theme.palette.primary.main : theme.palette.text.primary
+                                }}
+                                checked={selected}
+                            />
+                            {option}
+                        </React.Fragment>
+                    )}
+                    renderTags={renderTags}
+                    renderInput={params => (
+                        <Box width="15rem">
+                            <TextField
+                                {...params}
+                                variant="standard"
+                                label="Namespaces"
+                                fullWidth
+                                InputLabelProps={{ shrink: true }}
+                                style={{ marginTop: 0 }}
+                                placeholder={[...filter.namespaces.values()].length > 0 ? '' : 'Filter'}
+                            />
+                        </Box>
+                    )}
+                />
+                <div style={{ marginLeft: "20px" }}>
+                    <Tooltip title="By clicking this button you will start recording this particular namespace">
+                        <Button
+                            onClick={() => startRecording(selctedNamespace)}
+                            variant="outlined"
+                            style={{ textTransform: 'none' }}>
+                            Start Recording
                     </Button>
-                </Tooltip>
+                    </Tooltip>
+                </div>
             </div>
             <AdvisorLogViewer
                 key="logs"
