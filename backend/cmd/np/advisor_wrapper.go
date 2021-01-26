@@ -11,11 +11,17 @@ import (
 )
 
 var (
-	running bool = false
+	running       bool   = false
+	lineCount     int    = 0
+	lineNamespace string = ""
 )
 
-func Report(namespace string) {
+func Report(namespace string) []string {
 	log.Println("####### Sending a Network Policy Report for:", namespace)
+	if lineNamespace != namespace {
+		lineNamespace = namespace
+		lineCount = 0
+	}
 
 	file, err := os.Open("networktrace.log")
 	if err != nil {
@@ -30,12 +36,14 @@ func Report(namespace string) {
 	}
 
 	file.Close()
-
-	i := 0
+	var textOut []string
+	i := lineCount
 	for i < len(text)-1 {
 		i += 1
-		log.Println(text[i])
+		textOut = append(textOut, text[i])
 	}
+	lineCount = i
+	return textOut
 }
 
 func Start(namespace string) {

@@ -18,8 +18,8 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
-	"golang.org/x/oauth2"
 	np "github.com/headlamp/backend/cmd/np"
+	"golang.org/x/oauth2"
 )
 
 type HeadlampConfig struct {
@@ -259,8 +259,9 @@ func StartHeadlampServer(config *HeadlampConfig) {
 	// Network Policy Advisor
 	r.HandleFunc("/npreport/{namespace}", func(w http.ResponseWriter, r *http.Request) {
 		namespace := mux.Vars(r)["namespace"]
-		np.Report(namespace)
+		var text = np.Report(namespace)
 		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, "%s", text)
 		if err := json.NewEncoder(w).Encode("Report Request successful"); err != nil {
 			log.Println("Error encoding plugins list", err)
 		}
