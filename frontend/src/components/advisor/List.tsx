@@ -58,7 +58,11 @@ function AdvisorLogViewer(props: AdvisorLogViewerProps) {
                         console.log(data)
                         if (data != null) {
                             console.log("we update the log")
-                            setLogs(data)
+                            console.log("logs %s", logs)
+                            // setLogs(data)
+                            var temp = logs
+                            temp.push(data)
+                            setLogs(temp)
                         }
                     });
                 }
