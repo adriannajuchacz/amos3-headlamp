@@ -261,8 +261,7 @@ func StartHeadlampServer(config *HeadlampConfig) {
 		namespace := mux.Vars(r)["namespace"]
 		var text = np.Report(namespace)
 		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintf(w, "%s", text)
-		if err := json.NewEncoder(w).Encode("Report Request successful"); err != nil {
+		if err := json.NewEncoder(w).Encode(text); err != nil {
 			log.Println("Error encoding plugins list", err)
 		}
 	}).Methods("GET")

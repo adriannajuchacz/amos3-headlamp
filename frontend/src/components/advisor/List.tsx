@@ -47,6 +47,35 @@ function AdvisorLogViewer(props: AdvisorLogViewerProps) {
     const [lines, setLines] = React.useState<number>(100);
     const [logs, setLogs] = React.useState<string[]>([]);
 
+    console.log("We are in advisor")
+
+    function setLogsFunc() {
+        // setLogs([]);
+        fetch(`http://localhost:4466/npreport/${namespaceTitle}`)
+            .then(
+                function(response){
+                    response.json().then(function(data) {
+                        console.log(data)
+                        if (data != null) {
+                            console.log("we update the log")
+                            setLogs(data)
+                        }
+                    });
+                }
+            )
+    }
+
+    React.useEffect(() => {
+        console.log("We are in React use Effect")
+        const interval =  setInterval(() => {
+            console.log("We are in const intervall")
+            if (props.open) {
+                console.log("im if")
+                setLogsFunc();
+            }
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [open]);
 
     return (
         <LogViewer
