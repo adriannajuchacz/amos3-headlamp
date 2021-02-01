@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"time"
 
 	oidc "github.com/coreos/go-oidc"
 	"github.com/gorilla/handlers"
@@ -278,10 +279,23 @@ func StartHeadlampServer(config *HeadlampConfig) {
 	r.HandleFunc("/npstop/{namespace}", func(w http.ResponseWriter, r *http.Request) {
 		namespace := mux.Vars(r)["namespace"]
 		np.Stop(namespace)
-		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode("Stop Request successful"); err != nil {
-			log.Println("Error encoding plugins list", err)
+
+		var f *os.File
+		f, err = os.Open("network-policy.yaml")
+		if err != nil {
+			log.Println(err)
 		}
+		modtime := time.Now()
+
+		w.Header().Add("Content-Disposition", "attachment; filename="+f.Name())
+		w.Header().Set("Content-Type", "application/octet-stream")
+		w.Header().Add("Access-Control-Expose-Headers", "Content-Disposition")
+		http.ServeContent(w, r, f.Name(), modtime, f)
+
+		// w.Header().Set("Content-Type", "application/json")
+		// if err := json.NewEncoder(w).Encode("Stop Request successful"); err != nil {
+		// 	log.Println("Error encoding plugins list", err)
+		// }
 	}).Methods("GET")
 
 	// Serve the frontend if needed

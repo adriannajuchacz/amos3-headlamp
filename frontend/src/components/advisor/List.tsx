@@ -35,7 +35,7 @@ interface AdvisorLogViewerProps extends Omit<LogViewerProps, 'logs'> {
 
 function stopRecording(namespace: any) {
     fetch(`http://localhost:4466/npstop/${namespace}`)
-        .then(response => response.json())
+        .then(response => response.text())
         .then(data => {
             console.log(data)
         });
