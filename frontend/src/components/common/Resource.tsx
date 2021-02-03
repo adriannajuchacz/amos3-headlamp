@@ -33,6 +33,12 @@ import Empty from './EmptyContent';
 import { DateLabel, HoverInfoLabel, StatusLabel, StatusLabelProps } from './Label';
 import Link from './Link';
 import { LightTooltip } from './Tooltip';
+import Tooltip from '@material-ui/core/Tooltip';
+import fileDownloadOutline from '@iconify/icons-mdi/file-download-outline';
+
+
+
+
 
 const useStyles = makeStyles(theme => ({
   metadataValueLabel: {
@@ -228,10 +234,29 @@ export function MainInfoSection(props: MainInfoSectionProps) {
       action({item: resource})));
   }
 
+  function downloadFile() {
+    const element = document.createElement('a');
+    const file = new Blob([JSON.stringify(resource.jsonData, null, 2)], { type: 'application/json' });
+    let filename = resource.jsonData.metadata.name;
+    element.href = URL.createObjectURL(file);
+    element.download = `${filename}.yml`;
+    // Required for FireFox
+    document.body.appendChild(element);
+    element.click();
+  }
+
   let defaultActions: MainInfoSectionProps['actions'] = [];
 
   if (!noDefaultActions && resource) {
     defaultActions = [
+      <Tooltip title="Download">
+      <IconButton
+        aria-label="download"
+        onClick={downloadFile}
+      >
+        <Icon icon={fileDownloadOutline} />
+      </IconButton>
+    </Tooltip>,
       <EditButton item={resource} />,
       <DeleteButton item={resource} />
     ];

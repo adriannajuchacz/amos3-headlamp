@@ -382,7 +382,8 @@ func proxyHandler(url *url.URL, proxy *httputil.ReverseProxy) func(http.Response
 }
 
 func GetDefaultKubeConfigPath() string {
-	return filepath.Join(os.Getenv("HOME"), ".kube", "config")
+	return filepath.Join(os.Getenv("HOME"), "C:", "\\", "Users", "Marko",
+		".kube", "config")
 }
 
 func (c *clientConfig) getConfig(w http.ResponseWriter, r *http.Request) {
