@@ -36,8 +36,15 @@ interface AdvisorLogViewerProps extends Omit<LogViewerProps, 'logs'> {
 function stopRecording(namespace: any) {
     fetch(`http://localhost:4466/npstop/${namespace}`)
         .then(response => response.text())
-        .then(data => {
+        .then(data => { 
             console.log(data)
+            const element = document.createElement('a');
+            const file = new Blob([data], { type: 'text/plain' });
+            element.href = URL.createObjectURL(file);
+            element.download = `network-policy.yaml`;
+            // Required for FireFox
+            document.body.appendChild(element);
+            element.click();
         });
 }
 
