@@ -36,7 +36,7 @@ interface AdvisorLogViewerProps extends Omit<LogViewerProps, 'logs'> {
 function stopRecording(namespace: any) {
     fetch(`http://localhost:4466/npstop/${namespace}`)
         .then(response => response.text())
-        .then(data => { 
+        .then(data => {
             console.log(data)
             const element = document.createElement('a');
             const file = new Blob([data], { type: 'text/plain' });
@@ -58,12 +58,11 @@ function AdvisorLogViewer(props: AdvisorLogViewerProps) {
         // setLogs([]);
         fetch(`http://localhost:4466/npreport/${namespaceTitle}`)
             .then(
-                function(response){
-                    response.json().then(function(data) {
+                function (response) {
+                    response.json().then(function (data) {
                         console.log(data)
                         if (data != null) {
                             setLogs(logs => [...logs, data + ''])
-                            
                         }
                     });
                 }
@@ -71,12 +70,11 @@ function AdvisorLogViewer(props: AdvisorLogViewerProps) {
     }
 
     React.useEffect(() => {
-        const interval =  setInterval(() => {
+        const interval = setInterval(() => {
             if (props.open) {
-                console.log("im if")
                 setLogsFunc();
             }
-        }, 1000);
+        }, 2000);
         return () => clearInterval(interval);
     }, [open]);
 
@@ -86,6 +84,7 @@ function AdvisorLogViewer(props: AdvisorLogViewerProps) {
             open={open}
             onClose={onClose}
             logs={logs}
+            topActions={[]}
         >
             <Timer
                 onStop={() => stopRecording(namespaceTitle)}
