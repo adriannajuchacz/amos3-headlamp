@@ -62,7 +62,7 @@ function AdvisorLogViewer(props: AdvisorLogViewerProps) {
                     response.json().then(function (data) {
                         console.log(data)
                         if (data != null) {
-                            setLogs(logs => [...logs, data + ''])
+                            setLogs(logs => [...logs, data + '\n'])
                         }
                     });
                 }
