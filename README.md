@@ -20,6 +20,7 @@ web UIs/dashboards available (i.e. to list and view resources) as well as other 
   * Cancellable creation/update/deletion operations
   * Logs, exec, and resource editor with documentation
   * Read-write / interactive (actions based on permissions)
+  * Record different / multiple namespaces to get Network Policiy advices
 
 ## Screenshots
 
@@ -35,6 +36,10 @@ web UIs/dashboards available (i.e. to list and view resources) as well as other 
     <tr>
         <td width="33%"><img src="https://raw.githubusercontent.com/kinvolk/headlamp/screenshots/screenshots/editor_documentation.png"></td>
         <td width="33%"><img src="https://raw.githubusercontent.com/kinvolk/headlamp/screenshots/screenshots/terminal.png"></td>
+    </tr>
+  	<tr>
+        <td width="33%"><img src="img/NetworkPolicyAdvisor1.PNG"></td>
+        <td width="33%"><img src="img/NetworkPolicyAdvisor2.PNG"></td>
     </tr>
 </table>
 
