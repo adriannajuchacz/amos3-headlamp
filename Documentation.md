@@ -20,19 +20,3 @@ make run-frontend
 ## Technical details
 Headlamp is documented inside the README.md and under docs with more details.
 
-## Changelog
-
-### mid-project-release
-
-#### Frontend changelog
-/src/components/sidebar.tsx --> build Network Policy Advisor Tab inside
-
-/src/components/advisor/List.tsx --> generate a List of avablie Namespaces
-
-/src/lib/k8s/advisor.ts --> add KubeObject for Network Policy Advisor
-
-/src/lib/k8s/router.tsx --> add path for Network Poilicy Advisor
-
-#### Backend changelog
-
-/cmd/advisor_wrapper.go --> Wrapper to call the Network Policy Advisor. Inspektor Gadget need to be deployed on the Kubernetes Cluster.
